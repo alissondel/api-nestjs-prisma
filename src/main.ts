@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 //import { HttpExceptionFilter } from './common/filters/http-exception/http-exception.filter';
 import { UnauthorizedInterceptor } from './common/errors/interceptors/unauthorized.interceptors';
@@ -10,6 +11,16 @@ import { DatabaseInterceptor } from './common/errors/interceptors/database.inter
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  const config = new DocumentBuilder()
+    .setTitle('Simple Blog')
+    .setDescription('The Simple Blog API description')
+    .setVersion('1.0')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document);
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
